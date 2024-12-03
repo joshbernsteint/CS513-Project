@@ -16,15 +16,18 @@ def daysToSeconds(time):
         res *= -1
     return res
 
-df = pd.read_csv('./data/exoplanets.csv')
+def main():
+    df = pd.read_csv('./data/exoplanets.csv')
+    df['rastr'] = df['rastr'].apply(daysToSeconds)
+    df['decstr'] = df['decstr'].apply(daysToSeconds)
 
-df['rastr'] = df['rastr'].apply(daysToSeconds)
-df['decstr'] = df['decstr'].apply(daysToSeconds)
+    # Change sy_pynum to be 1 or more True if 1, False if more than 1
+    df['sy_pnum'] = df['sy_pnum'].apply(lambda x: x == 1)
+    df = df.drop(columns=["pl_name","hostname"])
+    df = df.rename(columns={'sy_snum': "num_stars", 'sy_pnum': 'single_planet_exosystem'})
 
-# Change sy_pynum to be 1 or more True if 1, False if more than 1
-df['sy_pnum'] = df['sy_pnum'].apply(lambda x: x == 1)
-df = df.drop(columns=["pl_name","hostname"])
-df = df.rename(columns={'sy_snum': "num_stars", 'sy_pnum': 'single_planet_exosystem'})
+    cleaned_csv = open('./data/exoplanets-clean.csv', 'w')
+    df.to_csv(cleaned_csv, index=False, lineterminator='\n')
 
-cleaned_csv = open('./data/exoplanets-clean.csv', 'w')
-df.to_csv(cleaned_csv, index=False, lineterminator='\n')
+
+print(daysToSeconds('15h32m22.5s'))
